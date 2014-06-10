@@ -1,0 +1,6 @@
+*/migrations/*
+*.pyc
+*.sqlite3
+settings.py
+/EnvMagic
+.metadata/
