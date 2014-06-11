@@ -57,7 +57,7 @@ class Artist(models.Model):
 class Card(models.Model):
     set = models.ForeignKey(Set)
     layout = models.ForeignKey(Layout)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=200)
     manaCost = models.CharField(max_length=50)
     cmc = models.IntegerField(null=True)
     colors = models.ManyToManyField(Color)
