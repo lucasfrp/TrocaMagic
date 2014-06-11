@@ -11,4 +11,5 @@ admin.site.register(models.Subtype)
 admin.site.register(models.Card)
 admin.site.register(models.NamesCard)
 admin.site.register(models.Set)
+admin.site.register(models.TypeSet)
 

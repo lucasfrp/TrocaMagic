@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 from carta import models
 import json
-from django.db.utils import IntegrityError
 from carta.models import NamesCard
 
 class Command(BaseCommand):
@@ -36,28 +35,32 @@ class Command(BaseCommand):
         data = json.load(json_data)
         for titulo_expansao in data.keys():
             expansao = data[titulo_expansao]
-            print 'Adicionando %s' % expansao['name']
+            print '\n\n'
+            print '***Adicionando %s***' % expansao['name'].encode(encoding='UTF-8', errors='strinct')
+            print '\n'
             cards = expansao.pop('cards')
             save_field(expansao, models.TypeSet, 'type')
-            expansao = models.Set(**expansao)
             try:
+                expansao = models.Set.objects.get(name=expansao['name'])
+            except models.Set.DoesNotExist:
+                expansao = models.Set(**expansao)
                 expansao.save()
-            except IntegrityError as e:
-                print 'Erro de integridade ao salvar o set %s. Verifique se o set ja existe na base' % expansao.name
-                print e
             for card in cards:
-                print 'adicionando %s' % card['name']
-                kwargs = card
-                save_field(kwargs, models.Layout, 'layout')   
-                save_field(kwargs, models.Rarity, 'rarity')
-                save_field(kwargs, models.Artist, 'artist')
-                colors = save_field(kwargs, models.Color, 'colors', 'color', commit=False)
-                subtypes = save_field(kwargs, models.Subtype, 'subtypes', 'subtype', commit=False)
-                supertypes = save_field(kwargs, models.Supertype, 'supertypes', 'supertype', commit=False)
-                names = kwargs.pop('names') if kwargs.get('names', False) else None
-                types = save_field(kwargs, models.Type, 'types', 'type', commit=False)                  
-                carta = models.Card(**kwargs)
                 try:
+                    models.Card.objects.get(set=expansao, name=card['name'])
+                    print '%s - Ja existe na base.' % card['name'].encode(encoding='UTF-8', errors='strinct')
+                except models.Card.DoesNotExist:
+                    kwargs = card
+                    save_field(kwargs, models.Layout, 'layout')   
+                    save_field(kwargs, models.Rarity, 'rarity')
+                    save_field(kwargs, models.Artist, 'artist')
+                    colors = save_field(kwargs, models.Color, 'colors', 'color', commit=False)
+                    subtypes = save_field(kwargs, models.Subtype, 'subtypes', 'subtype', commit=False)
+                    supertypes = save_field(kwargs, models.Supertype, 'supertypes', 'supertype', commit=False)
+                    names = kwargs.pop('names') if kwargs.get('names', False) else None
+                    types = save_field(kwargs, models.Type, 'types', 'type', commit=False)
+                                      
+                    carta = models.Card(**kwargs)                
                     carta.set = expansao
                     carta.save()
                     if colors:
@@ -72,9 +75,7 @@ class Command(BaseCommand):
                         for name in names:
                             Nome = NamesCard(nome=name, carta=carta)
                             Nome.save()                            
-                    print '%s adicionado com sucess.' % carta.name
-                except IntegrityError as e:
-                    print e
-                    print 'Erro de integridade ao salvar %s. Verifique se a carta ja existe na base.' % carta.name
-            print '%s adicionado com sucesso.' % expansao.name 
+                    print '%s - Adicionado com sucesso.' % carta.name.encode(encoding='UTF-8', errors='strinct')
+            print '\n'    
+            print '***%s adicionado com sucesso.***' % expansao.name.encode(encoding='UTF-8', errors='strinct') 
         json_data.close()
