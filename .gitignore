@@ -6,3 +6,6 @@ settings.py
 .metadata/
 output.txt
 db.*
+
+log/
+magic.wsgi

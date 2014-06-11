@@ -73,7 +73,7 @@ class Card(models.Model):
     power = models.CharField(max_length=5, null=True)
     toughness = models.CharField(max_length=5, null=True)
     loyalty = models.IntegerField(null=True)
-    multiverseid = models.IntegerField()
+    multiverseid = models.IntegerField(null=True)
     imageName = models.CharField(max_length=100)
     watermark = models.CharField(max_length=50)
     border = models.CharField(max_length=50, null=True)
@@ -83,7 +83,7 @@ class Card(models.Model):
     class Meta:
         unique_together = ('set', 'name')
     def __unicode__(self):
-        return self.name
+        return '%s (%s)' % (self.name, self.set.name)
     
 class NamesCard(models.Model):
     nome = models.CharField(max_length=100)

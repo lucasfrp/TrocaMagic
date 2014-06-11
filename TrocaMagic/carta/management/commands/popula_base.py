@@ -35,9 +35,8 @@ class Command(BaseCommand):
         data = json.load(json_data)
         for titulo_expansao in data.keys():
             expansao = data[titulo_expansao]
-            print '\n\n'
-            print '***Adicionando %s***' % expansao['name'].encode(encoding='UTF-8', errors='strinct')
             print '\n'
+            print '***Adicionando %s***' % expansao['name'].encode(encoding='UTF-8', errors='strinct')
             cards = expansao.pop('cards')
             save_field(expansao, models.TypeSet, 'type')
             try:
@@ -48,7 +47,7 @@ class Command(BaseCommand):
             for card in cards:
                 try:
                     models.Card.objects.get(set=expansao, name=card['name'])
-                    print '%s - Ja existe na base.' % card['name'].encode(encoding='UTF-8', errors='strinct')
+                    #print '%s - Ja existe na base.' % card['name'].encode(encoding='UTF-8', errors='strinct')
                 except models.Card.DoesNotExist:
                     kwargs = card
                     save_field(kwargs, models.Layout, 'layout')   
@@ -75,7 +74,7 @@ class Command(BaseCommand):
                         for name in names:
                             Nome = NamesCard(nome=name, carta=carta)
                             Nome.save()                            
-                    print '%s - Adicionado com sucesso.' % carta.name.encode(encoding='UTF-8', errors='strinct')
-            print '\n'    
-            print '***%s adicionado com sucesso.***' % expansao.name.encode(encoding='UTF-8', errors='strinct') 
+                    #print '%s - Adicionado com sucesso.' % carta.name.encode(encoding='UTF-8', errors='strinct')    
+            print '***%s adicionado com sucesso***' % expansao.name.encode(encoding='UTF-8', errors='strinct')
+            print '\n' 
         json_data.close()
